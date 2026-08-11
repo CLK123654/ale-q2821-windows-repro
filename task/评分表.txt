@@ -1,0 +1,25 @@
+总分100分。
+
+1. v2文件边界与情景合同（10分，Gate）
+满分条件：输入递归且只含README.md、broken_dag.py、release_scenarios.csv、state_contract.json，dags只含internet_multichannel_release.py，results只含四个CSV和两个JSON。十个scenario_id按合同顺序且唯一；通道、所选终态、未选择横线和风险枚举全部合法，运行前后输入与DAG源码不变。
+
+2. DagBag身份、任务集合与边关系（14分，Gate）
+满分条件：Apache Airflow2.10.5DagBag无import error导入internet_multichannel_release；task_graph.csv按合同顺序恰有十个task_id。choose_channels直接下游为三个deploy和no_channel，四者共同汇入selected_join，risk_gate只连promote，finalize只接在promote之后。
+
+3.分支选择与未选通道语义（13分，Gate）
+满分条件：choose_channels为BranchPythonOperator；合法通道按api/web/mobile映射到固定部署task_id，空通道只返回no_channel。十行branch_decisions的branch_targets与输入逐行一致，未选择部署任务为SKIPPED，所选任务保留输入终态。
+
+4.四上游汇合真值与故障传播（15分，Gate）
+满分条件：selected_join有四个上游且trigger_rule=none_failed_min_one_success。八行trigger_truth_table由合同计数复算：无FAILED且至少一项SUCCESS时RUN/SUCCESS；全SKIPPED时BLOCK/SKIPPED；含FAILED时BLOCK/UPSTREAM_FAILED。S05、S06和S07的状态分别符合对应边界。
+
+5.风险短路与晋级边界（13分，Gate）
+满分条件：risk_gate为ShortCircuitOperator且ignore_downstream_trigger_rules=False；selected_join成功时risk_gate自身为SUCCESS。只有非空通道且risk_decision=ALLOW并且汇合成功时promote=SUCCESS；S03、S04、S10为SKIPPED，S05、S06为UPSTREAM_FAILED。
+
+6. all_done收尾与一百行状态账（13分，Gate）
+满分条件：finalize只位于promote下游并使用all_done；十个情景的finalize均为SUCCESS。scenario_states.csv按scenario_order和task_order输出100个唯一联合主键，状态仅为SUCCESS、FAILED、SKIPPED、UPSTREAM_FAILED，固定计数为62、2、30、6。
+
+7.汇总、不变量与失败关闭发布（10分）
+满分条件：state_summary.json记录contract_id=internet-release-skip-v2、tasks=10、scenarios=10、state_rows=100、branch_decision_rows=10、truth_cases=8及四类状态计数；validation.json包含Airflow2.10.5离线引擎边界和20条全true不变量。非空输出目录被拒绝，任何失败不形成完整六文件交付，成功时从同级暂存目录整体发布。
+
+8.独立复算、重复运行与破坏性验证（12分）
+满分条件：独立测试重新DagBag导入DAG并用另一套状态求值逻辑逐行核对四个CSV和两个JSON，不导入audit_release_dag.py。两个隔离正例结果逐字节一致并等于Reference；缺合同、多输入、重复scenario_id、未知通道、非法所选终态、多DAG文件、篡改join触发规则、预置非空输出八种修改均非零退出且不形成完整交付。

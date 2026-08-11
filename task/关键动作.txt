@@ -1,0 +1,7 @@
+核对四个只读输入、单一DAG源码和六份结果的internet-release-skip-v2文件边界。
+修复十任务依赖图，让choose_channels只返回四个真实直接下游中的已选目标。
+区分未选择通道与所选通道的显式SKIPPED终态，保持十个情景原始判断不被改写。
+配置selected_join的none_failed_min_one_success并从四上游终态推导运行、跳过或上游失败。
+设置risk_gate保留下游触发规则，使BLOCK和空通道只截断promote而不吞掉finalize。
+连接promote到all_done收尾，验证成功、跳过与上游失败三类终态都能完成finalize。
+从真实DagBag实例导出操作器类、触发规则、上下游集合和短路属性。
