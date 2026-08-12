@@ -1,0 +1,33 @@
+{
+  "record_id": "recvqMyPjRrkFW",
+  "question_id_before": 2821,
+  "question_id_after": 2821,
+  "text_fields_match": true,
+  "protected_fields_unchanged": true,
+  "downloaded_via_lark": true,
+  "attachment_hashes_match": true,
+  "attachments": {
+    "输入数据包.zip": {
+      "file_token": "EXb3bvfyuou9ygxnWMPcbFnWnph",
+      "sha256": "f3efa79e2e57b8774d1da4e46d6ab82b9d1bdf783720b214442d45b5b94e00b2"
+    },
+    "reference.zip": {
+      "file_token": "VmO3boRZLoL6rXxOy5bckYl6nfh",
+      "sha256": "e929681c67dbebc00ccf0e38990e571b3eaf069fd1d5ca5b53a7c4480435ea9b"
+    },
+    "关键标准答案.xlsx": {
+      "file_token": "UOlXbNmO0oQz9QxmDMtcZXVNnge",
+      "sha256": "0aa92ef4ebc507cf2b42147f421675428687b10b4cbb71ccc4090b30c1292fe4"
+    },
+    "任务规格转化.xlsx": {
+      "file_token": "HWCwbUXPboaBHxxbKsdclGTVnde",
+      "sha256": "67f769f1b452941eb516c6621d37000d9355cb93504bb51f57755b8cde6d00ec"
+    }
+  },
+  "windows": {
+    "commit_sha": "26157f0a4024cdf7838351e9f5609d66d6cb5535",
+    "workflow_run_id": "31650704028",
+    "result": "PASS"
+  },
+  "github_artifacts_after_cleanup": 0
+}
