@@ -1,7 +1,7 @@
-核对四个只读输入、单一DAG源码和六份结果的internet-release-skip-v2文件边界。
-修复十任务依赖图，让choose_channels只返回四个真实直接下游中的已选目标。
-区分未选择通道与所选通道的显式SKIPPED终态，保持十个情景原始判断不被改写。
-配置selected_join的none_failed_min_one_success并从四上游终态推导运行、跳过或上游失败。
-设置risk_gate保留下游触发规则，使BLOCK和空通道只截断promote而不吞掉finalize。
-连接promote到all_done收尾，验证成功、跳过与上游失败三类终态都能完成finalize。
-从真实DagBag实例导出操作器类、触发规则、上下游集合和短路属性。
+核对发布规则、批次清单和当前DAG，确认缺失的空通道、风险判断和收尾任务。
+补齐Branch下游及通道映射，确保未选通道由Airflow写成跳过状态。
+设置selected_join的none_failed_min_one_success和risk_gate的短路范围。
+将finalize放在promote之后并使用all_done，保留原有调度方式和并发限制。
+初始化新的Airflow元数据库，按logical_date执行待复核发布批次。
+从DagRun和TaskInstance读取批次终态，核对晋级、阻断、失败传播和收尾结果。
+整理DAG结构、批次状态及运行历史，完成发布交接说明。

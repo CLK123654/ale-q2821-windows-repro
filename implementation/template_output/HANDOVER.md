@@ -1,0 +1,7 @@
+#多渠道发布DAG交接
+
+发布规则来自发布保障组提供的release_policy.json。修复后的DAG位于dags/internet_multichannel_release.py，批次处理入口位于tools/replay_batches.py。
+
+results目录记录DAG结构、批次终态、DagRun历史和TaskInstance历史。交接前需要核对风险阻断没有晋级版本，通道失败能向汇合任务传播，finalize在各类上游终态下均完成收尾。
+
+本交付物在Windows11主机的WSL2环境中运行ApacheAirflow。

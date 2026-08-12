@@ -1,4 +1,17 @@
-总分100分
+﻿题目ID,学科一级分类,学科二级分类,题目难度,任务概要,涉及的专业软件,包含的操作类型,任务prompt‼️,输入数据包（压缩包）‼️,reference（压缩包）‼️,关键标准答案‼️,关键动作,评分表（直接输入内容或使用txt文档）‼️,本项任务的环境依赖,相关专业软件的关键步骤,任务规格转化（excel或txt文档）,初标是否已完成,生产专家,完成日期
+,"Computing, Data & Mathematical Sciences 计算、数据与数学科学",基础设施工程与云运维,高,内容平台的多渠道发布DAG会把未选通道的跳过状态带入汇合任务，风险阻断后收尾任务也会被一并跳过。平台工程师需要修复分支、汇合、风险短路和收尾关系，将待复核批次写入Airflow元数据库，并交付各批次的实际任务终态。,Apache Airflow,领域专业软件操作、文件和数据处理、脚本/命令/程序化处理、结果验证,"内容平台通过internet_multichannel_release协调API、Web和移动端发布。当前DAG缺少空通道、风险判断和收尾任务，汇合任务仍使用默认触发规则。发布保障组需要在下个发布窗口前完成修复，并核对待复核批次是否按预期晋级和收尾。
+
+请使用输入包中的发布规则、批次清单和当前DAG完成交接。先补齐DAG的任务关系，使分支只选择实际发布通道，空通道走no_channel；再设置selected_join、risk_gate和finalize的触发规则，保留原有dag_id、调度方式和并发限制。
+
+把release_batches.csv中的批次写入新的Airflow元数据库并执行DAG。已选通道使用清单中的实际结果，未选通道由Branch跳过。风险结论为block或没有可发布通道时，版本不得进入promote；通道失败必须传播到selected_join。无论promote是成功、跳过还是上游失败，finalize都要完成收尾。
+
+交付output目录，其中dags保存修复后的DAG，tools保存批次处理入口，results保存DAG结构、批次状态、DagRun历史和TaskInstance历史，HANDOVER.md说明发布前的核对结果。",输入数据包.zip,reference.zip,关键标准答案.xlsx,"核对发布规则、批次清单和当前DAG，确认缺失的空通道、风险判断和收尾任务。
+补齐Branch下游及通道映射，确保未选通道由Airflow写成跳过状态。
+设置selected_join的none_failed_min_one_success和risk_gate的短路范围。
+将finalize放在promote之后并使用all_done，保留原有调度方式和并发限制。
+初始化新的Airflow元数据库，按logical_date执行待复核发布批次。
+从DagRun和TaskInstance读取批次终态，核对晋级、阻断、失败传播和收尾结果。
+整理DAG结构、批次状态及运行历史，完成发布交接说明。","总分100分
 
 1.交付结构
 分值：8分
@@ -94,4 +107,16 @@
 客观硬性标准：文中引用的交付物全部存在，运行边界表述准确。
 阈值：五类信息齐全。
 优先级：辅助项
-所属层级：L1任务指令遵循层
+所属层级：L1任务指令遵循层","操作系统： Windows11加WSL2。
+
+主软件为ApacheAirflow2.10.5，在WSL2的Ubuntu24.04中运行。Airflow使用SQLite元数据库和SequentialExecutor，DAG加载、元数据库迁移、批次执行及任务终态查询均由Airflow完成。
+
+Python3.11用于运行Airflow和批次处理入口，PowerShell7用于从Windows调用WSL2。处理过程使用CPU，GPU可保持空闲；磁盘需要容纳Airflow环境、元数据库、日志和交付目录。数据库迁移与批次执行分别设置超时，出现元数据库锁等待或DAG导入错误时终止当前处理。
+
+输入目录保持只读，交付目录需要写入DAG、CSV、JSON和Markdown文件。执行账号需要创建Airflow元数据库、执行DAG，并读取DagRun和TaskInstance对象。","1.使用DagBag加载当前DAG，核对dag_id、调度方式、并发限制和已有任务关系。
+2.按release_policy.json补齐no_channel、selected_join、risk_gate、promote和finalize。
+3.让BranchPythonOperator按dag_run.conf返回已选部署任务或no_channel。
+4.设置selected_join为none_failed_min_one_success，risk_gate保留下游触发规则，finalize为all_done。
+5.设置新的AIRFLOW_HOME并执行airflow db migrate，按logical_date用dag.test执行各发布批次。
+6.从DagRun和TaskInstance查询实际终态，导出batch_status.csv、task_instance_history.csv、dagrun_history.csv和dag_structure.json。
+7.核对风险阻断、通道失败和空通道没有进入promote，且所有批次均完成finalize。",任务规格转化.xlsx,否,,

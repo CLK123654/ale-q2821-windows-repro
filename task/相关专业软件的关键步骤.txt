@@ -1,8 +1,7 @@
-1.在隔离AIRFLOW_HOME中用json加载internet-release-skip-v2合同，核对输入4份、DAG1份、结果6份的精确相对路径集合。
-2.用csv.DictReader读取十个发布情景，验证scenario_id顺序、通道集合、所选终态、未选择横线和风险枚举。
-3.在internet_multichannel_release.py中建立无schedule且catchup=False的DAG，按合同顺序定义十个task_id。
-4.用BranchPythonOperator把api、web、mobile映射到三个deploy任务，并为无通道返回字符串no_channel。
-5.将四个分支共同连接到selected_join，设置TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS并保留显式SKIPPED输入。
-6.配置ShortCircuitOperator读取通道与risk_decision，将ignore_downstream_trigger_rules固定为False。
-7.连接selected_join→risk_gate→promote→finalize，只给finalize设置TriggerRule.ALL_DONE。
-8.用Airflow2.10.5DagBag导入单一DAG，读取每个任务的真实类名、trigger_rule、上下游集合和短路属性。
+1.使用DagBag加载当前DAG，核对dag_id、调度方式、并发限制和已有任务关系。
+2.按release_policy.json补齐no_channel、selected_join、risk_gate、promote和finalize。
+3.让BranchPythonOperator按dag_run.conf返回已选部署任务或no_channel。
+4.设置selected_join为none_failed_min_one_success，risk_gate保留下游触发规则，finalize为all_done。
+5.设置新的AIRFLOW_HOME并执行airflow db migrate，按logical_date用dag.test执行各发布批次。
+6.从DagRun和TaskInstance查询实际终态，导出batch_status.csv、task_instance_history.csv、dagrun_history.csv和dag_structure.json。
+7.核对风险阻断、通道失败和空通道没有进入promote，且所有批次均完成finalize。

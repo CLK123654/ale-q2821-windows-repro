@@ -1,5 +1,3 @@
-# ALE题目2821的Windows复现
+#Q2821 Windows reproduction
 
-本仓库只包含题目2821的脱敏或虚构材料。主软件为Apache Airflow。工作流固定使用windows-2025，先核对四个附件哈希，再在两个独立目录展开输入和Reference，并调用主软件执行本地检查。
-
-当前仓库是独立验证载体，不包含飞书令牌、附件下载地址或原始备份。
+This repository contains one Apache Airflow task and its independent Windows2025 plus WSL2 verification.

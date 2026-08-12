@@ -1,17 +1,7 @@
-多渠道发布编排正在把正常的Branch跳过误判成整条发布失败，风险阻断后也偶尔出现收尾任务被一并跳过。
+内容平台通过internet_multichannel_release协调API、Web和移动端发布。当前DAG缺少空通道、风险判断和收尾任务，汇合任务仍使用默认触发规则。发布保障组需要在下个发布窗口前完成修复，并核对待复核批次是否按预期晋级和收尾。
 
-请修复broken_dag.py所代表的结构缺口，在Apache Airflow2.10.5中交付internet_multichannel_release，使API、Web、移动端的选择、部署终态、风险判断和最终收尾能按调度器语义闭合。
+请使用输入包中的发布规则、批次清单和当前DAG完成交接。先补齐DAG的任务关系，使分支只选择实际发布通道，空通道走no_channel；再设置selected_join、risk_gate和finalize的触发规则，保留原有dag_id、调度方式和并发限制。
 
-全程只做离线DAG导入和状态演算，不调用任何部署端点。
+把release_batches.csv中的批次写入新的Airflow元数据库并执行DAG。已选通道使用清单中的实际结果，未选通道由Branch跳过。风险结论为block或没有可发布通道时，版本不得进入promote；通道失败必须传播到selected_join。无论promote是成功、跳过还是上游失败，finalize都要完成收尾。
 
-internet-release-skip-v2合同给出十个固定task_id、通道到部署任务的映射、情景顺序和八组汇合计数。
-
-所选通道的SUCCESS、FAILED、SKIPPED都是已有终态；
-
-横线仅表示分支未选择，不能把显式SKIPPED改写成未选择，也不能让DAG源码读取预期状态或结果表。
-
-choose_channels使用BranchPythonOperator并只返回直接下游deploy_api、deploy_web、deploy_mobile或no_channel；
-
-四个分支通过none_failed_min_one_success汇入selected_join。
-
-请在Airflow中加载DAG并运行与本题有关的任务语义，交付DAG、必要的辅助模块和结果说明。
+交付output目录，其中dags保存修复后的DAG，tools保存批次处理入口，results保存DAG结构、批次状态、DagRun历史和TaskInstance历史，HANDOVER.md说明发布前的核对结果。
