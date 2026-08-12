@@ -33,7 +33,7 @@
   ],
   "reviewed_artifacts_sha256": {
     "ALE-专家数据作业表_q2821.csv": "b5470e2933c99f3dd281a53044dc7f23f4eac646f50ca7a0fad0c547b207ac56",
-    "reference.zip": "f112df5e5f340f48f529332b60c05e9112d358a12836ce15987e4e701907f1c1",
+    "reference.zip": "e929681c67dbebc00ccf0e38990e571b3eaf069fd1d5ca5b53a7c4480435ea9b",
     "task_fields.json": "94d324f24c457c7eb50f92201d200d2e2619dc30ffa107f888685e130e7dfd72",
     "任务prompt.txt": "75d99194da97f1e05b1d09801298623cedb4bea3251a576bd82182448cd64eca",
     "任务名称.txt": "9646070c7457172cb1c0814e364146647ecfe13ab18c7497e4f003e8e64c2460",
